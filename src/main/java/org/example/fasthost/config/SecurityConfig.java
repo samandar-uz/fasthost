@@ -42,6 +42,7 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/home",
                                 "/error",
+
                                 "/favicon.ico",
                                 "/images/**",
                                 "/css/**",
@@ -51,6 +52,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/index",
                                 "/hosting",
+                                "/orders/**",
                                 "/settings",
                                 "/logout"
                         ).authenticated()

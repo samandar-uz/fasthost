@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>UzHost – Buyurtma #[[${order.id}]]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: { primary: "#EF4444" },
+                    fontFamily: { sans: ["Inter", "system-ui", "sans-serif"] }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="font-sans bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-950 p-4 sm:p-6 lg:p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="mb-6 flex items-center gap-4">
+            <a href="/orders" class="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-900">
+                <span class="material-icons text-xl">arrow_back</span>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold">Buyurtma #[[${order.id}]]</h1>
+                <p class="text-sm text-gray-500">Yaratilgan: [[${#temporals.format(order.createTime, 'dd MMMM yyyy, HH:mm')}]]</p>
+            </div>
+        </div>
+
+        <!-- Status Card -->
+        <div class="mb-6 p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Holat</h2>
+                <span th:classappend="${order.status.name() == 'ACTIVE' ? 'bg-emerald-100 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400' :
+                                       order.status.name() == 'PENDING' ? 'bg-yellow-100 dark:bg-yellow-950/30 text-yellow-700 dark:text-yellow-400' :
+                                       order.status.name() == 'EXPIRED' ? 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-400' :
+                                       'bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400'}"
+                      class="px-4 py-2 rounded-full text-sm font-semibold">
+                    [[${order.status.name() == 'ACTIVE' ? 'Faol' :
+                        order.status.name() == 'PENDING' ? 'Kutilmoqda' :
+                        order.status.name() == 'EXPIRED' ? 'Tugagan' : 'Bekor qilingan'}]]
+                </span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Boshlanish vaqti</p>
+                    <p class="font-semibold">[[${#temporals.format(order.startTime, 'dd.MM.yyyy')}]]</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Tugash vaqti</p>
+                    <p class="font-semibold">[[${#temporals.format(order.endTime, 'dd.MM.yyyy')}]]</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Qolgan muddat</p>
+                    <p class="font-semibold" th:text="${order.status.name() == 'ACTIVE' ?
+                        (#temporals.day(order.endTime) - #temporals.day(#temporals.createNow())) + ' kun' :
+                        'N/A'}"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tariff Info -->
+        <div class="mb-6 p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <h2 class="text-lg font-semibold mb-4">Tarif ma'lumotlari</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Tarif nomi</p>
+                    <p class="font-semibold text-lg">[[${order.tariff.name}]]</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Narx</p>
+                    <p class="font-semibold text-lg text-primary">[[${order.totalPrice}]] so'm</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Disk hajmi</p>
+                    <p class="font-semibold">[[${order.tariff.limitQuota}]] GB</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">RAM</p>
+                    <p class="font-semibold">[[${order.tariff.limitMemory}]] MB</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Trafik</p>
+                    <p class="font-semibold" th:text="${order.tariff.unlimitedTraffic ? 'Cheksiz' : order.tariff.trafficLimit + ' GB'}"></p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Muddat</p>
+                    <p class="font-semibold">[[${order.durationMonths}]] oy</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Database Info (Active orders only) -->
+        <div th:if="${order.status.name() == 'ACTIVE'}" class="mb-6 p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <h2 class="text-lg font-semibold mb-4">Database ma'lumotlari</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm text-gray-500 mb-1 block">Database nomi</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" th:value="${order.databaseName}" readonly class="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-mono text-sm">
+                        <button onclick="copyToClipboard(this, '[[${order.databaseName}]]')" class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium text-sm">
+                            Nusxalash
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-500 mb-1 block">Foydalanuvchi</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" th:value="${order.databaseUser}" readonly class="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-mono text-sm">
+                        <button onclick="copyToClipboard(this, '[[${order.databaseUser}]]')" class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium text-sm">
+                            Nusxalash
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-sm text-gray-500 mb-1 block">Parol</label>
+                    <div class="flex items-center gap-2">
+                        <input type="password" th:value="${order.databasePassword}" id="dbPassword" readonly class="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 font-mono text-sm">
+                        <button onclick="togglePassword()" class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <span class="material-icons text-lg">visibility</span>
+                        </button>
+                        <button onclick="copyToClipboard(this, '[[${order.databasePassword}]]')" class="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 font-medium text-sm">
+                            Nusxalash
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domain Info -->
+        <div th:if="${order.domainName}" class="mb-6 p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+            <h2 class="text-lg font-semibold mb-4">Domen</h2>
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Domen nomi</p>
+                    <p class="font-semibold text-lg">[[${order.domainName}]]</p>
+                </div>
+                <a th:href="'http://' + ${order.domainName}" target="_blank" class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 font-medium text-sm">
+                    Ochish
+                </a>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <a href="/orders" class="flex-1 py-3 rounded-lg border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-center font-medium">
+                Orqaga
+            </a>
+            <button th:if="${order.status.name() == 'ACTIVE'}" onclick="showExtendModal()" class="flex-1 py-3 rounded-lg bg-primary hover:bg-red-600 text-white font-medium">
+                Muddatni uzaytirish
+            </button>
+            <form th:if="${order.status.name() == 'PENDING'}" th:action="@{/orders/{id}/cancel(id=${order.id})}" method="post" class="flex-1">
+                <button type="submit" class="w-full py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium">
+                    Bekor qilish
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Extend Modal -->
+<div id="extendModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-900 rounded-2xl max-w-md w-full p-6">
+        <h3 class="text-xl font-bold mb-6">Muddatni uzaytirish</h3>
+        <form th:action="@{/orders/{id}/extend(id=${order.id})}" method="post">
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Qo'shimcha muddat</label>
+                <select name="months" class="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                    <option value="1">1 oy</option>
+                    <option value="3">3 oy (5% chegirma)</option>
+                    <option value="6">6 oy (10% chegirma)</option>
+                    <option value="12">12 oy (15% chegirma)</option>
+                </select>
+            </div>
+            <div class="flex gap-3">
+                <button type="button" onclick="closeExtendModal()" class="flex-1 py-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                    Bekor qilish
+                </button>
+                <button type="submit" class="flex-1 py-3 rounded-lg bg-primary hover:bg-red-600 text-white font-medium">
+                    Uzaytirish
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function copyToClipboard(button, text) {
+        navigator.clipboard.writeText(text).then(() => {
+            const original = button.textContent;
+            button.textContent = 'Nusxalandi!';
+            button.classList.add('bg-green-100', 'dark:bg-green-900/30', 'text-green-700', 'dark:text-green-400');
+            setTimeout(() => {
+                button.textContent = original;
+                button.classList.remove('bg-green-100', 'dark:bg-green-900/30', 'text-green-700', 'dark:text-green-400');
+            }, 2000);
+        });
+    }
+
+    function togglePassword() {
+        const input = document.getElementById('dbPassword');
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function showExtendModal() {
+        document.getElementById('extendModal').classList.remove('hidden');
+        document.getElementById('extendModal').classList.add('flex');
+    }
+
+    function closeExtendModal() {
+        document.getElementById('extendModal').classList.add('hidden');
+        document.getElementById('extendModal').classList.remove('flex');
+    }
+</script>
+</body>
+</html>
