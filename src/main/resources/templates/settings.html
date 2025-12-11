@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>UzHost – Hosting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#EF4444",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .material-icons {
+            font-size: inherit;
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+
+<!-- Mobile backdrop -->
+<div id="backdrop" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar"
+           class="w-64 flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 fixed lg:relative inset-y-0 left-0 z-50 lg:z-auto transition-transform duration-300 -translate-x-full lg:translate-x-0 flex">
+        <button onclick="toggleMobileMenu()"
+                class="lg:hidden absolute top-4 right-4 w-8 h-8 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-900">
+            <span class="material-icons text-lg">close</span>
+        </button>
+
+        <div class="mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-red-600 flex items-center justify-center text-white font-bold text-lg">
+                    U
+                </div>
+                <div>
+                    <p class="font-semibold text-lg">UzHost</p>
+                    <p class="text-sm text-gray-500">Client Panel</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-2">
+            <a href="/index"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <span class="material-icons text-xl">dashboard</span>
+                <span>Home</span>
+            </a>
+            <a href="/hosting"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <span class="material-icons text-xl">storage</span>
+                <span>Hosting</span>
+            </a>
+            <a href="/settings"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-900 dark:bg-gray-800 text-white">
+                <span class="material-icons text-xl">settings</span>
+                <span>Sozlamalar</span>
+            </a>
+
+        </nav>
+
+        <div class="border-t border-gray-200 dark:border-gray-800 pt-4 space-y-2">
+
+            <a href="/logout"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <span class="material-icons text-xl">logout</span>
+                <span>Chiqish</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1">
+        <!-- HEADER -->
+        <header class="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">Sozlanmalar</h1>
+                </div>
+
+                <div class="flex items-center gap-4">
+                 
+
+                    <div class="flex items-center gap-3 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-red-600 flex items-center justify-center text-white text-sm font-semibold">
+                            S
+                        </div>
+                        <div class="hidden sm:block">
+                            <p class="text-sm font-medium" th:text="${user.name}"></p>
+                            <p class="text-xs text-gray-500">#<span th:text="${user.id}"></span></p>
+                        </div>
+                    </div>
+
+                    <button onclick="toggleMobileMenu()"
+                            class="lg:hidden w-10 h-10 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center">
+                        <span class="material-icons text-xl">menu</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- CONTENT -->
+        <div class="p-6">
+
+            <div id="content-account" class="tab-content">
+                <div class="max-w-4xl space-y-6">
+                    <!-- Avatar Section -->
+
+                    <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-xl shadow-gray-200/50 dark:shadow-none">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="material-icons text-primary text-2xl">badge</span>
+                            <h3 class="text-xl font-bold">Shaxsiy ma'lumotlar</h3>
+                        </div>
+                        <form class="space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                                        <span class="flex items-center gap-2">
+                                            <span class="material-icons text-base">person</span>
+                                            Ism
+                                        </span>
+                                    </label>
+                                    <label>
+                                        <input type="text" value="" placeholder="Ismingizni kiriting"
+                                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 focus:outline-none focus:border-primary dark:focus:border-primary transition-colors">
+                                    </label>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                                        <span class="flex items-center gap-2">
+                                            <span class="material-icons text-base">person</span>
+                                            Familiya
+                                        </span>
+                                    </label>
+                                    <label>
+                                        <input type="text" value="" placeholder="Familiyangizni kiriting"
+                                               class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 focus:outline-none focus:border-primary dark:focus:border-primary transition-colors">
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                                    <span class="flex items-center gap-2">
+                                        <span class="material-icons text-base">email</span>
+                                        Email
+                                    </span>
+                                </label>
+                                <label>
+                                    <input type="email" value="" placeholder="email@example.com"
+                                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 focus:outline-none focus:border-primary dark:focus:border-primary transition-colors">
+                                </label>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+                                    <span class="flex items-center gap-2">
+                                        <span class="material-icons text-base">phone</span>
+                                        Telefon
+                                    </span>
+                                </label>
+                                <label>
+                                    <input type="tel" value="" placeholder="+998 90 123 45 67"
+                                           class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 focus:outline-none focus:border-primary dark:focus:border-primary transition-colors">
+                                </label>
+                            </div>
+                            <div class="flex justify-end pt-4">
+                                <button type="submit"
+                                        class="px-8 py-3 bg-gradient-to-r from-primary to-red-600 text-white rounded-xl font-semibold hover:opacity-90">
+    <span class="flex items-center gap-2">
+        <span class="material-icons text-lg">save</span>
+        Saqlash
+    </span>
+                                </button>
+
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Account Info -->
+                    <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 shadow-xl shadow-gray-200/50 dark:shadow-none">
+                        <div class="flex items-center gap-3 mb-6">
+                            <span class="material-icons text-primary text-2xl">info</span>
+                            <h3 class="text-xl font-bold">Hisob ma'lumotlari</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between py-4 border-b border-gray-200 dark:border-gray-800">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                        <span class="material-icons text-blue-600 dark:text-blue-400">fingerprint</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Foydalanuvchi ID</p>
+                                        <p class="font-semibold">   #<span th:text="${user.id}" id="realUserId"></span></p>
+                                    </div>
+                                </div>
+
+
+                                <button
+                                        class="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                                        data-copy-id="realUserId"
+                                        onclick="copyUserId(this)"
+                                >
+                                    Nusxalash
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between py-4 border-b border-gray-200 dark:border-gray-800">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                        <span class="material-icons text-purple-600 dark:text-purple-400">event</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Ro'yxatdan o'tgan sana</p>
+                                        <p class="font-semibold" th:text="${#temporals.format(user.createTime, 'dd MMMM, yyyy')}"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                                        <span class="material-icons text-green-600 dark:text-green-400">check_circle</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Hisob holati</p>
+                                        <p class="font-semibold">Faol</p>
+                                    </div>
+                                </div>
+                                <span class="px-4 py-2 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full text-sm font-semibold">
+                                    Tasdiqlangan
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            </div>
+
+      </main>
+</div>
+<script>
+    function copyUserId(button) {
+        const spanId = button.getAttribute("data-copy-id");
+        const span = document.getElementById(spanId);
+
+        if (!span) {
+            console.error("ID elementi topilmadi:", spanId);
+            return;
+        }
+
+        const text = span.innerText.trim();
+
+        navigator.clipboard.writeText(text).then(() => {
+            button.innerText = "Nusxalandi!";
+            button.classList.add("text-green-600");
+
+            setTimeout(() => {
+                button.innerText = "Nusxalash";
+                button.classList.remove("text-green-600");
+            }, 1200);
+        });
+    }
+</script>
+
+<script>
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+        document.documentElement.classList.remove("dark");
+    }
+
+    function toggleMobileMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('backdrop');
+
+        const isHidden = sidebar.classList.contains('-translate-x-full');
+
+        if (isHidden) {
+            sidebar.classList.remove('-translate-x-full');
+            backdrop.classList.remove('hidden');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
+        }
+    }
+
+    function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+
+        // Remove active state from all buttons
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('border-primary', 'text-primary');
+            button.classList.add('border-transparent', 'text-gray-500');
+        });
+
+        // Show selected tab
+        document.getElementById('content-' + tabName).classList.remove('hidden');
+
+        // Add active state to clicked button
+        const activeButton = document.getElementById('tab-' + tabName);
+        activeButton.classList.add('border-primary', 'text-primary');
+        activeButton.classList.remove('border-transparent', 'text-gray-500');
+    }
+</script>
+</body>
+</html>

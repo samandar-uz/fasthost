@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>UzHost — Kirish</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#EF4444",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .material-icons {
+            font-size: inherit;
+        }
+
+        .form-transition {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+
+<div class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+
+        <!-- HEADER -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center gap-3 mb-4">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-red-600 flex items-center justify-center text-white font-bold text-2xl">
+                    U
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold mb-2">UzHost</h1>
+            <p class="text-gray-500">Client Panel</p>
+        </div>
+
+        <!-- AUTH CONTAINER -->
+        <div class="p-8 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+
+            <!-- TABS -->
+            <div class="flex gap-2 mb-6 p-1 rounded-lg bg-gray-100 dark:bg-gray-800">
+                <button onclick="showLogin()" id="loginTab"
+                        class="flex-1 py-2.5 rounded-md font-medium text-sm transition bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                    Kirish
+                </button>
+                <button onclick="showRegister()" id="registerTab"
+                        class="flex-1 py-2.5 rounded-md font-medium text-sm transition text-gray-600 dark:text-gray-400">
+                    Ro'yxatdan o'tish
+                </button>
+            </div>
+
+
+            <form id="loginForm" class="space-y-4" action="/auth/sign_in" method="POST">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Email</label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">email</span>
+                        <label>
+                            <input type="email" required
+                                   name="email"
+                                   class="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                   placeholder="sizning@email.uz"/>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Parol</label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">lock</span>
+                        <label for="loginPassword"></label><input type="password" required id="loginPassword"
+                                                                  name="password"
+                                                                  class="w-full pl-11 pr-12 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                                                  placeholder=""/>
+                        <button type="button" onclick="togglePassword('loginPassword', this)"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                            <span class="material-icons text-xl">visibility_off</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox"
+                               class="w-4 h-4 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"/>
+                        <span class="text-gray-600 dark:text-gray-400">Eslab qolish</span>
+                    </label>
+                    <a href="#" class="text-primary hover:text-red-600">Parolni unutdingizmi?</a>
+                </div>
+
+                <button type="submit"
+                        class="w-full py-3 rounded-lg bg-primary hover:bg-red-600 text-white font-medium transition">
+                    Kirish
+                </button>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="registerForm" class="space-y-4 hidden" action="/auth/sign_up" method="POST">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Ism</label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">person</span>
+                        <label>
+                            <input type="text" required
+                                   name="name"
+                                   class="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                   placeholder="To'liq ismingiz"/>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Email</label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">email</span>
+                        <label>
+                            <input type="email" required
+                                   name="email"
+                                   class="w-full pl-11 pr-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                   placeholder="sizning@email.uz"/>
+                        </label>
+                    </div>
+                </div>
+
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Parol</label>
+                    <div class="relative">
+                        <span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">lock</span>
+                        <label for="registerPassword"></label>
+                        <input type="password" required id="registerPassword"
+                               name="password"
+                               class="w-full pl-11 pr-12 py-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                               placeholder=""/>
+                        <button type="button" onclick="togglePassword('registerPassword', this)"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                            <span class="material-icons text-xl">visibility_off</span>
+                        </button>
+                    </div>
+                </div>
+
+
+                <label class="flex items-start gap-2 cursor-pointer text-sm">
+                    <input type="checkbox" required
+                           class="w-4 h-4 mt-0.5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary"/>
+                    <span class="text-gray-600 dark:text-gray-400">Men <a href="#"
+                                                                          class="text-primary hover:text-red-600">foydalanish shartlari</a> va <a
+                            href="#"
+                            class="text-primary hover:text-red-600">maxfiylik siyosati</a> bilan tanishdim</span>
+                </label>
+
+                <button type="submit"
+                        class="w-full py-3 rounded-lg bg-primary hover:bg-red-600 text-white font-medium transition">
+                    Ro'yxatdan o'tish
+                </button>
+            </form>
+
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="text-center mt-6 text-sm text-gray-500">
+            <p>&copy; 2025 UzHost. Barcha huquqlar himoyalangan.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Theme toggle
+    // Load saved theme
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+        document.documentElement.classList.remove("dark");
+    }
+
+    // Tab switching
+    function showLogin() {
+        document.getElementById('loginForm').classList.remove('hidden');
+        document.getElementById('registerForm').classList.add('hidden');
+
+        document.getElementById('loginTab').classList.add('bg-white', 'dark:bg-gray-900', 'text-gray-900', 'dark:text-white');
+        document.getElementById('loginTab').classList.remove('text-gray-600', 'dark:text-gray-400');
+
+        document.getElementById('registerTab').classList.remove('bg-white', 'dark:bg-gray-900', 'text-gray-900', 'dark:text-white');
+        document.getElementById('registerTab').classList.add('text-gray-600', 'dark:text-gray-400');
+    }
+
+    function showRegister() {
+        document.getElementById('loginForm').classList.add('hidden');
+        document.getElementById('registerForm').classList.remove('hidden');
+
+        document.getElementById('registerTab').classList.add('bg-white', 'dark:bg-gray-900', 'text-gray-900', 'dark:text-white');
+        document.getElementById('registerTab').classList.remove('text-gray-600', 'dark:text-gray-400');
+
+        document.getElementById('loginTab').classList.remove('bg-white', 'dark:bg-gray-900', 'text-gray-900', 'dark:text-white');
+        document.getElementById('loginTab').classList.add('text-gray-600', 'dark:text-gray-400');
+    }
+
+    // Password visibility toggle
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('.material-icons');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility';
+        } else {
+            input.type = 'password';
+            icon.textContent = 'visibility_off';
+        }
+    }
+
+</script>
+</body>
+</html>

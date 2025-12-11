@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="uz" class="dark" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>UzHost – Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#EF4444",
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"],
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .material-icons {
+            font-size: inherit;
+        }
+    </style>
+</head>
+
+<body class="font-sans bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+
+<!-- Mobile backdrop -->
+<div id="backdrop" onclick="toggleMobileMenu()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+
+<div class="flex min-h-screen">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar"
+           class="w-64 flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-6 fixed lg:relative inset-y-0 left-0 z-50 lg:z-auto transition-transform duration-300 -translate-x-full lg:translate-x-0 flex">
+        <button onclick="toggleMobileMenu()"
+                class="lg:hidden absolute top-4 right-4 w-8 h-8 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-gray-900">
+            <span class="material-icons text-lg">close</span>
+        </button>
+
+        <div class="mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-red-600 flex items-center justify-center text-white font-bold text-lg">
+                    U
+                </div>
+                <div>
+                    <p class="font-semibold text-lg">UzHost</p>
+                    <p class="text-sm text-gray-500">Client Panel</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-2">
+            <a href="/index" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-gray-900 dark:bg-gray-800 text-white">
+                <span class="material-icons text-xl">dashboard</span>
+                <span>Home</span>
+            </a>
+            <a href="/hosting"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <span class="material-icons text-xl">storage</span>
+                <span>Hosting</span>
+            </a>
+            <a href="/settings"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <span class="material-icons text-xl">settings</span>
+                <span>Sozlamalar</span>
+            </a>
+           
+        </nav>
+
+        <div class="border-t border-gray-200 dark:border-gray-800 pt-4 space-y-2">
+
+            <a href="/logout"
+               class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900">
+                <span class="material-icons text-xl">logout</span>
+                <span>Chiqish</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="flex-1">
+        <!-- HEADER -->
+        <header class="border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">Home</h1>
+                </div>
+
+                <div class="flex items-center gap-4">
+                 
+
+                    <div class="flex items-center gap-3 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-800">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-red-600 flex items-center justify-center text-white text-sm font-semibold">
+                            S
+                        </div>
+                        <div class="hidden sm:block">
+                            <p class="text-sm font-medium" th:text="${user.name}"></p>
+                            <p class="text-xs text-gray-500">#<span th:text="${user.id}"></span></p>
+                        </div>
+                    </div>
+
+                    <button onclick="toggleMobileMenu()"
+                            class="lg:hidden w-10 h-10 rounded-full border border-gray-200 dark:border-gray-800 flex items-center justify-center">
+                        <span class="material-icons text-xl">menu</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="p-6">
+            <!-- STATUS BANNER -->
+            <div class="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30 flex items-center gap-3">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <p class="text-sm font-medium text-emerald-700 dark:text-emerald-400">Barcha xizmatlar faol
+                    ishlayapti</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- HOSTING -->
+                <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                                <span class="material-icons text-xl text-gray-700 dark:text-gray-300">storage</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">Hosting</h3>
+                                <p class="text-sm text-gray-500">1 xizmat</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mb-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">ID:</span>
+                            <span class="font-mono">#16916</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Tarif:</span>
+                            <span class="font-medium">SSD-2Gb</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Holat:</span>
+                            <span class="px-2 py-1 rounded-full text-xs bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-400 font-medium">Nofaol</span>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-2.5 rounded-lg bg-primary hover:bg-red-600 text-white font-medium text-sm transition">
+                        Buyurtma berish
+                    </button>
+                </div>
+
+                <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+                    <div class="mb-4">
+                        <h3 class="font-semibold mb-1">Balans</h3>
+                        <p class="text-sm text-gray-500">Hisobingiz</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="text-3xl font-bold mb-2" th:text="${user.balance}"> <span class="text-lg text-gray-500">so'm</span></p>
+                        <p class="text-sm text-gray-500">Oxirgi to'lov: 10.12.2025</p>
+                    </div>
+
+                    <button class="w-full py-2.5 rounded-lg bg-primary hover:bg-red-600 text-white font-medium text-sm transition">
+                        To'ldirish
+                    </button>
+                </div>
+
+                <!-- TO'LOVLAR -->
+                <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+                    <div class="mb-4">
+                        <h3 class="font-semibold mb-1">So'nggi to'lovlar</h3>
+                        <p class="text-sm text-gray-500">Oxirgi 3 ta</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-medium">Hosting SSD-2Gb</p>
+                                <p class="text-xs text-gray-500">10.12.2025</p>
+                            </div>
+                            <p class="font-semibold">45 000</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-medium">VDS 2CPU / 4Gb</p>
+                                <p class="text-xs text-gray-500">09.12.2025</p>
+                            </div>
+                            <p class="font-semibold">85 000</p>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-sm font-medium">SMS100 tarif</p>
+                                <p class="text-xs text-gray-500">05.12.2025</p>
+                            </div>
+                            <p class="font-semibold">15 000</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </main>
+</div>
+
+
+
+<script>
+    function toggleTheme() {
+        document.documentElement.classList.toggle("dark");
+        const isDark = document.documentElement.classList.contains("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+        document.documentElement.classList.remove("dark");
+    }
+
+    function toggleMobileMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('backdrop');
+
+        const isHidden = sidebar.classList.contains('-translate-x-full');
+
+        if (isHidden) {
+            sidebar.classList.remove('-translate-x-full');
+            backdrop.classList.remove('hidden');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
+        }
+    }
+</script>
+</body>
+</html>
