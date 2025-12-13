@@ -4,12 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
 public class OrderCreateResponse {
-    private Integer orderId;
-    private Double totalPrice;
-    private String paymentUrl;
-    private String paymentId;   // Click/Payme/Payze ID
+
+    private Long orderId;
+
+    private BigDecimal totalPrice;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
+
+    private Integer durationDays;
 }

@@ -6,10 +6,18 @@ import lombok.experimental.SuperBuilder;
 import org.example.fasthost.entity.abs.BaseEntity;
 import org.example.fasthost.entity.enums.OrderStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orders")
+@Table(
+        name = "orders",
+        indexes = {
+                @Index(name = "idx_orders_user", columnList = "user_id"),
+                @Index(name = "idx_orders_status", columnList = "status"),
+                @Index(name = "idx_orders_end_time", columnList = "end_time")
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,59 +25,93 @@ import java.time.LocalDateTime;
 @SuperBuilder
 public class Orders extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    /* =========================
+       RELATIONS
+       ========================= */
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tariff_id", nullable = false)
     private Tariffs tariff;
 
-    @Column(nullable = false)
-    private Integer durationMonths;   // tarif muddati (1, 3, 12 oy)
+    /* =========================
+       BILLING
+       ========================= */
 
-    @Column(nullable = false)
-    private Double totalPrice;
+    /** Hosting muddati (KUN bilan) */
+    @Column(name = "duration_days", nullable = false)
+    private Integer durationDays;
+
+    /** Buyurtma paytidagi yakuniy narx (snapshot) */
+    @Column(name = "total_price", nullable = false, precision = 15, scale = 2)
+    private BigDecimal totalPrice;
+
+    /* =========================
+       STATUS
+       ========================= */
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private OrderStatus status;
 
-    @Column(nullable = false)
+    /* =========================
+       TIME
+       ========================= */
+
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
-    @Column(nullable = false)
+    @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @Column
-    private String domainName;
+    /* =========================
+       HOSTING CREDENTIALS
+       ========================= */
 
-    @Column
-    private String paymentId; // to'lov provayderidan kelgan ID
+    /** Hosting login (masalan: db_user_xxx) */
+    @Column(nullable = false, length = 100)
+    private String login;
 
-    // Hosting uchun generatsiya qilingan DB ma’lumotlari
-    @Column
-    private String databaseName;
+    /** BCrypt hash (hech qachon plain text emas) */
+    @Column(name = "password_hash", nullable = false, length = 255)
+    private String passwordHash;
 
-    @Column
-    private String databaseUser;
-
-    @Column
-    private String databasePassword;
-
-    @Column
-    private Integer cronJobsUsed;
+    /* =========================
+       LIFECYCLE
+       ========================= */
 
     @PrePersist
-    public void prePersist() {
+    @PreUpdate
+    private void calculateDates() {
         if (status == null) {
-            status = OrderStatus.PENDING; // default holat
+            status = OrderStatus.PENDING;
         }
+
         if (startTime == null) {
             startTime = LocalDateTime.now();
         }
-        if (durationMonths != null && endTime == null) {
-            endTime = startTime.plusMonths(durationMonths);
+
+        if (durationDays == null || durationDays <= 0) {
+            throw new IllegalStateException("durationDays must be positive");
         }
+
+        endTime = startTime.plusDays(durationDays);
+    }
+
+    /* =========================
+       HELPERS
+       ========================= */
+
+    @Transient
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(endTime);
+    }
+
+    @Transient
+    public long remainingDays() {
+        return java.time.Duration.between(LocalDateTime.now(), endTime).toDays();
     }
 }
